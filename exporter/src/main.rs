@@ -11,7 +11,7 @@ mod infrastructure;
 mod presentation;
 
 use std::io::{Read, Write};
-use std::net::{Ipv4Addr, SocketAddr, TcpStream};
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, TcpStream};
 use std::process::ExitCode;
 use std::time::Duration;
 
@@ -118,16 +118,35 @@ async fn shutdown_signal() {
 /// `tapo-climate-exporter healthcheck`: used by the Docker HEALTHCHECK so the
 /// image needs no curl. Succeeds if the local /health endpoint answers 200.
 fn healthcheck() -> ExitCode {
-    let port = std::env::var("LISTEN_ADDR")
+    let listen_addr = std::env::var("LISTEN_ADDR")
         .ok()
         .and_then(|addr| addr.trim().parse::<SocketAddr>().ok())
-        .map_or(9101, |addr| addr.port());
+        .unwrap_or(DEFAULT_LISTEN_ADDR);
 
-    if health_endpoint_ok(SocketAddr::from((Ipv4Addr::LOCALHOST, port))) {
+    if health_endpoint_ok(probe_addr(listen_addr)) {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE
     }
+}
+
+/// Used by the health check when LISTEN_ADDR is unset or unparseable; matches
+/// the default in `Config`.
+const DEFAULT_LISTEN_ADDR: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 9101);
+
+/// The address the health check connects to for a server listening on
+/// `listen_addr`.
+///
+/// A concrete address is probed as configured, because the server answers
+/// nowhere else. A wildcard address (`0.0.0.0`, `[::]`) cannot be connected
+/// to portably, so the loopback address of the same family is used instead.
+fn probe_addr(listen_addr: SocketAddr) -> SocketAddr {
+    let ip = match listen_addr.ip() {
+        IpAddr::V4(ip) if ip.is_unspecified() => IpAddr::V4(Ipv4Addr::LOCALHOST),
+        IpAddr::V6(ip) if ip.is_unspecified() => IpAddr::V6(Ipv6Addr::LOCALHOST),
+        ip => ip,
+    };
+    SocketAddr::new(ip, listen_addr.port())
 }
 
 /// True if `GET /health` on `addr` answers with HTTP 200 within a few seconds.
@@ -186,5 +205,33 @@ mod tests {
             .local_addr()
             .unwrap();
         assert!(!health_endpoint_ok(addr));
+    }
+
+    #[test]
+    fn probe_uses_ipv4_loopback_for_the_ipv4_wildcard() {
+        assert_eq!(
+            probe_addr("0.0.0.0:9101".parse().unwrap()),
+            "127.0.0.1:9101".parse().unwrap()
+        );
+        assert_eq!(
+            probe_addr(DEFAULT_LISTEN_ADDR),
+            "127.0.0.1:9101".parse().unwrap()
+        );
+    }
+
+    #[test]
+    fn probe_uses_ipv6_loopback_for_the_ipv6_wildcard() {
+        assert_eq!(
+            probe_addr("[::]:9200".parse().unwrap()),
+            "[::1]:9200".parse().unwrap()
+        );
+    }
+
+    #[test]
+    fn probe_keeps_concrete_addresses() {
+        for addr in ["[::1]:9101", "192.168.1.20:9101", "127.0.0.1:8080"] {
+            let addr: SocketAddr = addr.parse().unwrap();
+            assert_eq!(probe_addr(addr), addr);
+        }
     }
 }
