@@ -1,8 +1,6 @@
 CARGO   := cargo
 MANIFEST := exporter/Cargo.toml
 COMPOSE := docker compose
-# Adds the override that lets Prometheus reach an exporter running on the host.
-COMPOSE_HOST_EXPORTER := $(COMPOSE) -f docker-compose.yml -f docker-compose.host-exporter.yml
 
 # Coverage tool version, used by coverage-tools.
 LLVM_COV_VERSION := 0.9.2
@@ -14,7 +12,7 @@ AUDIT_VERSION := 0.23.0
 export MSYS_NO_PATHCONV := 1
 
 .DEFAULT_GOAL := help
-.PHONY: help build run test coverage-tools coverage fmt fmt-check lint audit-tools audit monitoring up rebuild down logs
+.PHONY: help build run test coverage-tools coverage fmt fmt-check lint audit-tools audit up rebuild down logs
 
 help: ## List the available commands
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -49,9 +47,6 @@ audit-tools: ## Install cargo-audit locally (needed once for `make audit`)
 
 audit: ## Check all dependencies in Cargo.lock for known security advisories
 	$(CARGO) audit --file exporter/Cargo.lock
-
-monitoring: ## Start only Prometheus and Grafana (pair with `make run`)
-	$(COMPOSE_HOST_EXPORTER) up -d --no-deps prometheus grafana
 
 up: ## Build and start everything in Docker: exporter, Prometheus, Grafana
 	$(COMPOSE) up -d --build
