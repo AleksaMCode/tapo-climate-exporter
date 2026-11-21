@@ -2,7 +2,7 @@
 # root .env file can be copied into the image.
 
 # ---- Build stage ---------------------------------------------------------
-FROM rust:1-bookworm AS builder
+FROM rust:1.100-bookworm AS builder
 WORKDIR /build
 
 COPY exporter/Cargo.toml exporter/Cargo.lock ./
