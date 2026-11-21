@@ -19,7 +19,7 @@ services:
       - "127.0.0.1:9101:9101"
 
   prometheus:
-    image: prom/prometheus:v3.4.0
+    image: prom/prometheus:v3.16.0
     restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -36,7 +36,7 @@ services:
       - exporter
 
   grafana:
-    image: grafana/grafana:12.0.0
+    image: grafana/grafana:13.3.1
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
