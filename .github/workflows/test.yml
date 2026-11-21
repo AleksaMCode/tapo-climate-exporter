@@ -1,0 +1,36 @@
+name: Test
+
+# Runs the exporter's unit tests.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+
+      - name: Cache dependencies and build output
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: exporter
+
+      - name: Run tests
+        run: make test
