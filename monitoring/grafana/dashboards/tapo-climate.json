@@ -52,6 +52,8 @@
           },
           "expr": "avg(tapo_sensor_temperature_celsius{placement=\"indoor\"})",
           "legendFormat": "Indoor",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -125,6 +127,8 @@
           },
           "expr": "avg(tapo_sensor_humidity_percent{placement=\"indoor\"})",
           "legendFormat": "Indoor",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -198,6 +202,8 @@
           },
           "expr": "avg(tapo_sensor_temperature_celsius{placement=\"outdoor\"})",
           "legendFormat": "Outdoor",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -271,6 +277,8 @@
           },
           "expr": "avg(tapo_sensor_humidity_percent{placement=\"outdoor\"})",
           "legendFormat": "Outdoor",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -332,6 +340,8 @@
           },
           "expr": "(count(max by (device_id) (tapo_sensor_online) == 1) or vector(0))",
           "legendFormat": "Online",
+          "instant": true,
+          "range": false,
           "refId": "A"
         },
         {
@@ -341,6 +351,8 @@
           },
           "expr": "max(tapo_sensors_expected) - (count(max by (device_id) (tapo_sensor_online) == 1) or vector(0))",
           "legendFormat": "Offline / missing",
+          "instant": true,
+          "range": false,
           "refId": "B"
         },
         {
@@ -350,6 +362,8 @@
           },
           "expr": "max(tapo_sensors_expected)",
           "legendFormat": "Expected",
+          "instant": true,
+          "range": false,
           "refId": "C"
         }
       ],
@@ -451,6 +465,8 @@
           },
           "expr": "tapo_hub_up",
           "legendFormat": "Hub",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -531,6 +547,8 @@
           },
           "expr": "time() - tapo_last_successful_poll_timestamp_seconds",
           "legendFormat": "Age",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -601,6 +619,8 @@
           },
           "expr": "count(max by (device_id) (tapo_sensor_battery_low) == 1) or vector(0)",
           "legendFormat": "Low",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -665,6 +685,8 @@
           },
           "expr": "round(increase(tapo_poll_failures_total[24h]))",
           "legendFormat": "Failed",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -733,6 +755,8 @@
           },
           "expr": "max by (name) (tapo_sensor_online)",
           "legendFormat": "{{name}}",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -812,6 +836,8 @@
           },
           "expr": "max by (name) (tapo_sensor_temperature_celsius)",
           "legendFormat": "{{name}}",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -884,6 +910,8 @@
           },
           "expr": "max by (name) (tapo_sensor_humidity_percent)",
           "legendFormat": "{{name}}",
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
