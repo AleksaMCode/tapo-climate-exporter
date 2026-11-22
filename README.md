@@ -9,7 +9,7 @@
 [![Code style: rustfmt](https://img.shields.io/badge/code%20style%20-rustfmt-e3773e.svg)](https://rust-lang.github.io/rustfmt)
 ![](https://img.shields.io/github/v/release/AleksaMCode/tapo-climate-exporter)
 
-Collects temperature and humidity from Tapo [T310](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t310/)/[T315](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t315/) sensors through an [H100](https://www.tp-link.com/us/home-networking/smart-hub/tapo-h100/) hub and shows them in Grafana.
+Collects temperature and humidity from Tapo [T310](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t310/)/[T315](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t315/) sensors through a [H100](https://www.tp-link.com/us/home-networking/smart-hub/tapo-h100/) hub and shows them in Grafana.
 
 <p align="center">
 <img
