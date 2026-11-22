@@ -6,9 +6,9 @@ name: Audit
 #   - Trivy: the operating system packages in the exporter's Docker image.
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  # push:
+  #   branches: [main]
+  # pull_request:
   # New advisories are published without any change to this repository, so
   # also check once a week: Mondays at 06:00 UTC.
   # schedule:
