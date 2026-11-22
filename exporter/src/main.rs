@@ -141,12 +141,14 @@ const DEFAULT_LISTEN_ADDR: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNS
 /// nowhere else. A wildcard address (`0.0.0.0`, `[::]`) cannot be connected
 /// to portably, so the loopback address of the same family is used instead.
 fn probe_addr(listen_addr: SocketAddr) -> SocketAddr {
-    let ip = match listen_addr.ip() {
+    let loopback = match listen_addr.ip() {
         IpAddr::V4(ip) if ip.is_unspecified() => IpAddr::V4(Ipv4Addr::LOCALHOST),
         IpAddr::V6(ip) if ip.is_unspecified() => IpAddr::V6(Ipv6Addr::LOCALHOST),
-        ip => ip,
+        // Returned untouched: rebuilding the address would drop an IPv6
+        // scope id such as the `%3` in `[fe80::1%3]:9101`.
+        _ => return listen_addr,
     };
-    SocketAddr::new(ip, listen_addr.port())
+    SocketAddr::new(loopback, listen_addr.port())
 }
 
 /// True if `GET /health` on `addr` answers with HTTP 200 within a few seconds.
@@ -233,5 +235,13 @@ mod tests {
             let addr: SocketAddr = addr.parse().unwrap();
             assert_eq!(probe_addr(addr), addr);
         }
+
+        // A link-local IPv6 address keeps its scope id (the interface).
+        let scoped: SocketAddr = "[fe80::1%3]:9101".parse().unwrap();
+        let SocketAddr::V6(probed) = probe_addr(scoped) else {
+            panic!("expected an IPv6 address");
+        };
+        assert_eq!(probed.scope_id(), 3);
+        assert_eq!(SocketAddr::V6(probed), scoped);
     }
 }
