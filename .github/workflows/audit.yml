@@ -1,0 +1,82 @@
+name: Audit
+
+# Security checks:
+#   - cargo-audit: the dependencies in exporter/Cargo.lock against the RustSec
+#     advisory database.
+#   - Trivy: the operating system packages in the exporter's Docker image.
+
+on:
+  # push:
+  #   branches: [main]
+  # pull_request:
+  # New advisories are published without any change to this repository, so
+  # also check once a week: Mondays at 06:00 UTC.
+  # schedule:
+  #   - cron: "0 6 * * 1"
+  # Allows starting the check by hand from the Actions tab.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+
+      # Compiling cargo-audit takes a few minutes, so keep the binary between
+      # runs. The key changes when the pinned versions change.
+      - name: Cache cargo-audit
+        id: cache-cargo-audit
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-audit
+          key: cargo-audit-${{ runner.os }}-${{ hashFiles('Makefile', 'rust-toolchain.toml') }}
+
+      - name: Install cargo-audit
+        if: steps.cache-cargo-audit.outputs.cache-hit != 'true'
+        run: make audit-tools
+
+      - name: Audit dependencies
+        run: make audit
+
+  image-scan:
+    name: Docker image scan
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: tapo-climate-exporter:ci
+    steps:
+      - uses: actions/checkout@v5
+
+      # The Dockerfile copies .env into the image. CI has no real one, so the
+      # example file (placeholder values only) stands in for it.
+      - name: Create a placeholder .env
+        run: cp .env.example .env
+
+      - name: Build the exporter image
+        run: docker build --file exporter/Dockerfile --tag "$IMAGE" .
+
+      # Fails on HIGH or CRITICAL vulnerabilities that have a fix available.
+      # Pinned to a commit instead of a tag, because a tag can be moved.
+      - name: Scan the image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: v0.76.2
+          image-ref: ${{ env.IMAGE }}
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table

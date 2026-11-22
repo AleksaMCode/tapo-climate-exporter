@@ -1,0 +1,40 @@
+name: Formatter
+
+# Checks formatting (rustfmt) and lints (clippy) of the exporter.
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  # pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  formatter:
+    name: Format and clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+
+      - name: Cache dependencies and build output
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: exporter
+
+      - name: Check formatting
+        run: make fmt-check
+
+      - name: Run clippy
+        run: make lint

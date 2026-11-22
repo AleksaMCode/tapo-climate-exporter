@@ -1,0 +1,25 @@
+[package]
+name = "tapo-climate-exporter"
+version = "0.1.0"
+edition = "2024"
+authors = ["Aleksa Majkic <aleksamcode@gmail.com>"]
+description = "Prometheus exporter for temperature and humidity from Tapo T310/T315 sensors behind an H100 hub"
+readme = "../README.md"
+# Standalone application, not a library: never publish to crates.io.
+publish = false
+
+[dependencies]
+anyhow = "1.0.104"
+axum = "0.8.9"
+backon = "1.6.0"
+dotenvy = "0.15.7"
+serde_json = "1.0.154"
+tapo = "0.13.0"
+thiserror = "2.0.21"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "macros", "signal", "sync", "time", "net"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[dev-dependencies]
+tokio = { version = "1.54.1", features = ["test-util"] }
+tower = { version = "0.5.3", features = ["util"] }

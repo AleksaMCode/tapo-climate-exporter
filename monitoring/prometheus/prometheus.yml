@@ -1,0 +1,18 @@
+# Prometheus configuration for the Tapo Climate Exporter.
+#
+# The exporter refreshes its cache from the hub every POLL_INTERVAL_SECONDS
+# (default 60). Scraping more often than that only returns the same values.
+# Prometheus does not expand environment variables in this file, so keep the
+# interval below in step with POLL_INTERVAL_SECONDS by hand.
+#
+# Retention is set on the command line in docker-compose.yml
+# (PROMETHEUS_RETENTION in .env).
+
+global:
+  scrape_interval: 60s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: tapo-climate-exporter
+    static_configs:
+      - targets: ["exporter:9101"]
