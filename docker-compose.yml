@@ -30,8 +30,9 @@ services:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     ports:
-      # Only reachable from the server itself.
-      - "127.0.0.1:9090:9090"
+      # Only reachable from the server itself. Change PROMETHEUS_PORT if
+      # another service on the server already uses 9090.
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
     depends_on:
       - exporter
 
