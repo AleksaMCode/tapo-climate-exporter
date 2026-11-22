@@ -753,7 +753,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max by (name) (tapo_sensor_online)",
+          "expr": "max by (device_id, name) (tapo_sensor_online)",
           "legendFormat": "{{name}}",
           "instant": true,
           "range": false,
@@ -834,7 +834,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max by (name) (tapo_sensor_temperature_celsius)",
+          "expr": "max by (device_id, name) (tapo_sensor_temperature_celsius)",
           "legendFormat": "{{name}}",
           "instant": true,
           "range": false,
@@ -908,7 +908,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max by (name) (tapo_sensor_humidity_percent)",
+          "expr": "max by (device_id, name) (tapo_sensor_humidity_percent)",
           "legendFormat": "{{name}}",
           "instant": true,
           "range": false,
@@ -982,7 +982,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max by (name) (tapo_sensor_temperature_celsius)",
+          "expr": "max by (device_id, name) (tapo_sensor_temperature_celsius)",
           "legendFormat": "{{name}}",
           "refId": "A"
         },
@@ -1081,7 +1081,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max by (name) (tapo_sensor_humidity_percent)",
+          "expr": "max by (device_id, name) (tapo_sensor_humidity_percent)",
           "legendFormat": "{{name}}",
           "refId": "A"
         },
@@ -1292,7 +1292,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max by (name) (tapo_sensor_rssi_dbm)",
+          "expr": "max by (device_id, name) (tapo_sensor_rssi_dbm)",
           "legendFormat": "{{name}}",
           "refId": "A"
         }
