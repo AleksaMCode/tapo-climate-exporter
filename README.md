@@ -8,6 +8,9 @@
 [![Go 1.100.0](https://img.shields.io/badge/rust-1.100.0-B7410E.svg)](https://releases.rs/docs/1.100.0/)
 [![Code style: rustfmt](https://img.shields.io/badge/code%20style%20-rustfmt-e3773e.svg)](https://rust-lang.github.io/rustfmt)
 ![](https://img.shields.io/github/v/release/AleksaMCode/tapo-climate-exporter)
+[![Test](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/test.yml)
+[![Audit](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/audit.yml/badge.svg?branch=main)](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/audit.yml)
+[![codecov](https://codecov.io/gh/AleksaMCode/tapo-climate-exporter/branch/main/graph/badge.svg)](https://codecov.io/gh/AleksaMCode/tapo-climate-exporter)
 
 Collects temperature and humidity from Tapo [T310](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t310/)/[T315](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t315/) sensors through a [H100](https://www.tp-link.com/us/home-networking/smart-hub/tapo-h100/) hub and shows them in Grafana.
 

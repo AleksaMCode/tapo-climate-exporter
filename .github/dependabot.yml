@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /exporter
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # All compatible (minor and patch) updates arrive as one pull request per week. Major updates can break the build, so each gets its own.
+      compatible-updates:
+        update-types:
+          - minor
+          - patch

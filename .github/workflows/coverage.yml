@@ -1,0 +1,73 @@
+name: Coverage
+
+# Runs the unit tests with coverage (cargo-llvm-cov), fails if line coverage drops below the threshold, and uploads the report to Codecov.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # The job fails if line coverage is below this percentage.
+  MIN_LINE_COVERAGE: 80
+
+jobs:
+  coverage:
+    name: Test coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+
+      # Compiling cargo-llvm-cov takes a few minutes, so keep the binary between runs. The key changes when the pinned versions change.
+      - name: Cache cargo-llvm-cov
+        id: cache-cargo-llvm-cov
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-llvm-cov
+          key: cargo-llvm-cov-${{ runner.os }}-${{ hashFiles('Makefile', 'rust-toolchain.toml') }}
+
+      # The llvm-tools component is not part of the cached binary, so it is added on every run; that only takes a few seconds.
+      - name: Install llvm-tools
+        run: rustup component add llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        if: steps.cache-cargo-llvm-cov.outputs.cache-hit != 'true'
+        run: make coverage-tools
+
+      - name: Cache dependencies and build output
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: exporter
+
+      - name: Run tests with coverage
+        run: make coverage
+
+      # Reuses the data from the previous step; the tests do not run again.
+      - name: Write the lcov report and check the threshold
+        run: >
+          cargo llvm-cov report
+          --manifest-path exporter/Cargo.toml
+          --lcov --output-path lcov.info
+          --fail-under-lines "$MIN_LINE_COVERAGE"
+
+      # Runs even when the threshold check failed, so Codecov still shows the drop. Needs the CODECOV_TOKEN repository secret.
+      - name: Upload the report to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: lcov.info
+          disable_search: true
+          fail_ci_if_error: true
