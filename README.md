@@ -10,6 +10,7 @@
 ![](https://img.shields.io/github/v/release/AleksaMCode/tapo-climate-exporter)
 [![Test](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/test.yml)
 [![Audit](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/audit.yml/badge.svg?branch=main)](https://github.com/AleksaMCode/tapo-climate-exporter/actions/workflows/audit.yml)
+[![codecov](https://codecov.io/gh/AleksaMCode/tapo-climate-exporter/branch/main/graph/badge.svg)](https://codecov.io/gh/AleksaMCode/tapo-climate-exporter)
 
 Collects temperature and humidity from Tapo [T310](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t310/)/[T315](https://www.tp-link.com/us/smart-home/smart-sensor/tapo-t315/) sensors through a [H100](https://www.tp-link.com/us/home-networking/smart-hub/tapo-h100/) hub and shows them in Grafana.
 
